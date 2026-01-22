@@ -181,7 +181,6 @@ function updateUI() {
             item.style.animationDelay = `${index * 0.1}s`;
             
             // Determine Color based on type
-            let color = '#557C55'; // Default Text
             let amountColor = '#557C55'; // Sage Green (Income)
 
             if (t.type === 'expense') amountColor = '#C0392B'; // Red
@@ -251,4 +250,43 @@ window.setBudget = () => {
 }
 
 window.logout = () => signOut(auth);
-window.exportData = () => alert("Downloading CSV...");
+
+// ==========================================
+// CSV EXPORT FUNCTION (FIXED)
+// ==========================================
+window.exportData = () => {
+    if (transactions.length === 0) {
+        alert("No data to export!");
+        return;
+    }
+
+    // 1. Define Headers
+    const headers = ["Date", "Description", "Category", "Type", "Amount (INR)"];
+    
+    // 2. Map data to CSV rows
+    const rows = transactions.map(t => [
+        t.date,
+        `"${t.text.replace(/"/g, '""')}"`, // Escape quotes in description
+        t.category,
+        t.type.toUpperCase(),
+        t.amount
+    ]);
+
+    // 3. Combine headers and rows
+    const csvContent = [
+        headers.join(","), 
+        ...rows.map(r => r.join(","))
+    ].join("\n");
+
+    // 4. Create Blob
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    // 5. Trigger Download
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `savvy_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
