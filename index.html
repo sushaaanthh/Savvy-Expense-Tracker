@@ -1,145 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Savvy | Premium Expense Tracker</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Savvy | Zen Finance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <div class="container login-container" id="login-screen">
-        <header>
-            <div class="logo-circle"><i class="fas fa-wallet"></i></div>
-            <h1>Savvy</h1>
-            <p>Smart Finance for India</p>
-        </header>
-        <form id="login-form">
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="username" placeholder="e.g. Rahul" required autocomplete="off" />
-            </div>
-            <div class="form-group">
-                <label>Password <small>(First 4 letters of username)</small></label>
-                <input type="password" id="password" placeholder="••••" required />
-            </div>
-            <p id="login-error" class="error-msg hidden"><i class="fas fa-circle-exclamation"></i> Incorrect Password</p>
-            <button class="add-btn">Secure Login</button>
-        </form>
+    <div class="noise-overlay"></div>
+    <div class="organic-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
     </div>
 
-    <div class="container app-container hidden" id="app-screen">
-        <header class="app-header">
-            <div>
-                <h1>Savvy</h1>
-                <p id="welcome-msg">Welcome</p>
-            </div>
-            <div class="header-actions">
-                <button class="icon-btn" onclick="exportData()" title="Export CSV"><i class="fas fa-file-download"></i></button>
-                <button class="logout-btn" onclick="logout()" title="Logout"><i class="fas fa-power-off"></i></button>
-            </div>
-        </header>
-
-        <div class="balance-dashboard">
-            <div class="main-balance">
-                <h4>Net Balance</h4>
-                <h1 id="balance">₹0.00</h1>
-            </div>
-            <div class="inc-exp-container">
-                <div>
-                    <h4>Income</h4>
-                    <p id="money-plus" class="money plus">+₹0.00</p>
-                </div>
-                <div>
-                    <h4>Expense</h4>
-                    <p id="money-minus" class="money minus">-₹0.00</p>
-                </div>
-            </div>
+    <div id="login-screen" class="login-wrapper">
+        <div class="glass-card login-card pop-in">
+            <h1 class="brand-title">Savvy<span class="dot">.</span></h1>
+            <p class="brand-subtitle">Master your limit.</p>
             
-            <div class="budget-container">
-                <div class="budget-header">
-                    <span>Monthly Budget: <span id="budget-display">₹0</span></span>
-                    <button onclick="setBudget()" class="small-btn">Set Limit</button>
+            <form id="login-form">
+                <div class="floating-input">
+                    <input type="text" id="username" placeholder=" " required />
+                    <label>Username</label>
                 </div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="budget-bar"></div>
+                <div class="floating-input">
+                    <input type="password" id="password" placeholder=" " required />
+                    <label>Password</label>
                 </div>
-                <small id="budget-alert">Track your spending limits</small>
+                <button class="btn-primary hover-lift" type="submit">
+                    <span>Login / Register</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <p id="login-error" class="error-msg hidden"></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="app-screen" class="app-wrapper hidden">
+        
+        <nav class="nav-bar slide-down">
+            <div class="logo-pill">Savvy.</div>
+            <div class="user-controls">
+                <span id="welcome-msg" class="user-name">User</span>
+                <button class="logout-btn-styled" onclick="logout()">
+                    <span>Logout</span>
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
             </div>
-        </div>
+        </nav>
 
-        <div class="chart-container">
-            <canvas id="expenseChart"></canvas>
-        </div>
-
-        <form id="form">
-            <h3 id="form-title">Add Transaction</h3>
+        <main class="dashboard-grid">
             
-            <div class="type-switcher">
-                <input type="radio" name="type" id="type-expense" value="expense" checked>
-                <label for="type-expense" class="radio-label expense">Expense</label>
+            <section class="core-section">
                 
-                <input type="radio" name="type" id="type-income" value="income">
-                <label for="type-income" class="radio-label income">Income</label>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <input type="text" id="text" placeholder="Description (e.g. Chai)" required />
+                <div class="stats-row stagger-1">
+                    <div class="stat-card hover-scale">
+                        <div class="icon-bubble income-icon"><i class="fas fa-arrow-down"></i></div>
+                        <div>
+                            <small>Income</small>
+                            <h2 id="money-plus" class="text-green">+₹0</h2>
+                        </div>
+                    </div>
+                    <div class="stat-card hover-scale">
+                        <div class="icon-bubble expense-icon"><i class="fas fa-fire"></i></div>
+                        <div>
+                            <small>Spent</small>
+                            <h2 id="money-minus" class="text-red">-₹0</h2>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="number" id="amount" placeholder="Amount (₹)" step="1" min="0" required />
+
+                <div class="hero-card pop-in stagger-2" onclick="setBudget()">
+                    <div class="hero-header">
+                        <span>Monthly Limit</span>
+                        <i class="fas fa-pen-to-square edit-icon"></i>
+                    </div>
+                    <div class="budget-flex">
+                        <h1 id="budget-display" class="hero-amount">Set Limit</h1>
+                        <span id="budget-status" class="status-pill">--</span>
+                    </div>
+                    
+                    <div class="budget-track-large">
+                        <div id="budget-bar" class="budget-fill-large" style="width: 0%"></div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <select id="category">
-                        <option value="Food">🍔 Food</option>
-                        <option value="Rent">🏠 Rent/Bills</option>
-                        <option value="Transport">🚗 Travel</option>
-                        <option value="Entertainment">🎬 Fun</option>
-                        <option value="Shopping">🛍️ Shopping</option>
-                        <option value="Health">💊 Health</option>
-                        <option value="Salary">💰 Salary</option>
-                        <option value="Investment">📈 Investment</option>
-                        <option value="Other">🔌 Other</option>
-                    </select>
+                <div class="glass-panel chart-panel pop-in stagger-3">
+                    <div class="chart-wrapper">
+                        <canvas id="expense-chart"></canvas>
+                        <div class="chart-center-text">
+                            <span>Flow</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="date" id="date" required />
+            </section>
+
+            <section class="action-section">
+                
+                <div class="glass-panel form-panel pop-in stagger-4">
+                    <h3>New Entry</h3>
+                    <form id="form">
+                        <div class="switch-toggle">
+                            <input type="radio" id="type-exp" name="type" value="expense" checked>
+                            <label for="type-exp">Expense</label>
+                            
+                            <input type="radio" id="type-inc" name="type" value="income">
+                            <label for="type-inc">Income</label>
+                            
+                            <div class="toggle-slider"></div>
+                        </div>
+
+                        <div class="input-grid">
+                            <input type="text" id="text" placeholder="Description" class="zen-input" />
+                            <input type="number" id="amount" placeholder="₹ Amount" class="zen-input" />
+                        </div>
+                        
+                        <div class="input-grid">
+                            <select id="category" class="zen-input">
+                                <option value="Food">Food 🍔</option>
+                                <option value="Rent">Rent 🏠</option>
+                                <option value="Transport">Travel 🚖</option>
+                                <option value="Entertainment">Fun 🎉</option>
+                                <option value="Shopping">Shop 🛍️</option>
+                                <option value="Health">Health 💊</option>
+                                <option value="Investment">Invest 📈</option>
+                            </select>
+                            <input type="date" id="date" class="zen-input" required />
+                        </div>
+                        
+                        <button class="btn-action hover-lift"><i class="fas fa-plus"></i> Add Transaction</button>
+                    </form>
                 </div>
-            </div>
 
-            <button class="add-btn" id="submit-btn">Add Transaction</button>
-            <button type="button" class="cancel-btn hidden" id="cancel-edit" onclick="cancelEdit()">Cancel Edit</button>
-        </form>
+                <div class="history-feed pop-in stagger-5">
+                    <div class="feed-header">
+                        <h3>Transactions</h3>
+                        <button class="icon-btn" onclick="exportData()"><i class="fas fa-download"></i></button>
+                    </div>
+                    <ul id="list" class="transaction-list"></ul>
+                    <div id="empty-msg" class="empty-state">
+                        <i class="fas fa-leaf"></i>
+                        <p>No activity yet.</p>
+                    </div>
+                </div>
+            </section>
 
-        <div class="tools-container">
-            <div class="search-wrapper">
-                <i class="fas fa-search"></i>
-                <input type="text" id="search" placeholder="Search..." oninput="renderHistory()">
-            </div>
-            <select id="sort-filter" onchange="renderHistory()">
-                <option value="latest">Latest</option>
-                <option value="oldest">Oldest</option>
-                <option value="highest">Highest ₹</option>
-                <option value="lowest">Lowest ₹</option>
-            </select>
-        </div>
-
-        <div class="history-section">
-            <h3>Transaction History</h3>
-            <ul id="list" class="list"></ul>
-            <div id="empty-msg" class="empty-state">
-                <i class="fas fa-receipt"></i><br>
-                No transactions found.
-            </div>
-        </div>
+        </main>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
