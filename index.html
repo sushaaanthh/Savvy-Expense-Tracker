@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Savvy | Savings Made Simple</title>
+    <title>Savvy | Expense Tracker</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
@@ -23,7 +23,40 @@
     </div>
     <div id="toast"></div>
 
-    <div id="login-screen" class="login-wrapper">
+    <div id="landing-screen" class="landing-wrapper pop-in">
+        <nav class="landing-nav">
+            <div class="logo-pill landing-logo">Savvy.</div>
+            <button class="btn-xs btn-outline landing-login-btn" onclick="goToLogin()">Login</button>
+        </nav>
+
+        <div class="hero-section">
+            <h1 class="brand-title-large">Master your money,<br>effortlessly.</h1>
+            <p class="hero-subtitle">The voice-powered expense tracker that makes savings simpler. Track expenses, set budgets, and visualize growth.</p>
+            <button class="btn-primary hero-btn hover-lift" onclick="goToLogin()">
+                Get Started <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card hover-lift">
+                <i class="fas fa-microphone icon-bubble income-icon"></i>
+                <h3>Voice AI</h3>
+                <p>Just say "Spent 500 on food" and we handle the rest.</p>
+            </div>
+            <div class="feature-card hover-lift">
+                <i class="fas fa-chart-pie icon-bubble expense-icon"></i>
+                <h3>Smart Analytics</h3>
+                <p>Visual breakdown of where every rupee goes.</p>
+            </div>
+            <div class="feature-card hover-lift">
+                <i class="fas fa-piggy-bank icon-bubble savings-icon"></i>
+                <h3>Budget Limits</h3>
+                <p>Set caps and get alerts before you overspend.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-screen" class="login-wrapper hidden">
         <div class="glass-card login-card pop-in">
             <h1 class="brand-title">Savvy<span class="dot">.</span></h1>
             <p class="brand-subtitle">Savings made simple.</p>
@@ -41,6 +74,7 @@
                     <span>Login</span> <i class="fas fa-arrow-right"></i>
                 </button>
             </form>
+            <button class="btn-text" onclick="goBackToLanding()">← Back</button>
         </div>
     </div>
 

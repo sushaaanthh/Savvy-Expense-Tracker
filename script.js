@@ -24,6 +24,7 @@ let monthlyBudget = localStorage.getItem('monthlyBudget') || 0;
 
 // DOM
 const els = {
+    landingScreen: document.getElementById('landing-screen'), // New
     loginScreen: document.getElementById('login-screen'),
     appScreen: document.getElementById('app-screen'),
     list: document.getElementById('list'),
@@ -61,20 +62,40 @@ const catOptions = {
     income: ["Salary 💰", "Investment 📈", "Freelance 💻", "Gift 🎁"]
 };
 
-// AUTH
+// --- AUTH & NAVIGATION LOGIC ---
+
+// 1. Check Auth Status on Load
 onAuthStateChanged(auth, (user) => {
     if (user) {
+        // User is logged in -> Go to App
         document.getElementById('welcome-msg').innerText = user.email.split('@')[0];
+        els.landingScreen.classList.add('hidden');
         els.loginScreen.classList.add('hidden');
         els.appScreen.classList.remove('hidden');
         loadTransactions(user.uid);
         updateCategoryOptions('expense');
     } else {
-        els.loginScreen.classList.remove('hidden');
+        // User is NOT logged in -> Show Landing Page
         els.appScreen.classList.add('hidden');
+        els.loginScreen.classList.add('hidden');
+        els.landingScreen.classList.remove('hidden');
     }
 });
 
+// 2. Navigation Functions (Attached to Window for HTML access)
+window.goToLogin = () => {
+    els.landingScreen.classList.add('hidden');
+    els.loginScreen.classList.remove('hidden');
+};
+
+window.goBackToLanding = () => {
+    els.loginScreen.classList.add('hidden');
+    els.landingScreen.classList.remove('hidden');
+};
+
+window.logout = () => signOut(auth);
+
+// --- LOGIN LOGIC ---
 els.passToggle.addEventListener('click', () => {
     const type = els.passInput.getAttribute('type') === 'password' ? 'text' : 'password';
     els.passInput.setAttribute('type', type);
@@ -83,22 +104,18 @@ els.passToggle.addEventListener('click', () => {
 
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
-    // FIX 1: Remove spaces from username to prevent "Invalid Email" error
     const rawUsername = document.getElementById('username').value.trim();
-    const cleanUsername = rawUsername.replace(/\s+/g, ''); // Removes all spaces
+    const cleanUsername = rawUsername.replace(/\s+/g, '');
     const email = cleanUsername + "@savvy.com";
-    
     const pass = els.passInput.value.trim();
+
     if(pass.length < 6) return showToast("Password too short (min 6 chars)", "error");
 
     try { 
         await signInWithEmailAndPassword(auth, email, pass); 
     }
     catch (err) {
-        // FIX 2: Log the exact error code to Console for debugging
         console.error("Login Error:", err.code, err.message);
-
         if(err.code.includes('user-not-found') || err.code.includes('invalid-credential')) {
              try { 
                  await createUserWithEmailAndPassword(auth, email, pass); 
@@ -169,7 +186,6 @@ function updateUI() {
             els.budgetBar.style.transition = 'width 1.5s cubic-bezier(0.65, 0, 0.35, 1)';
             els.budgetBar.style.width = `${Math.min(pct, 100)}%`;
         }, 50);
-        
         els.budgetStatus.innerText = `${Math.round(pct)}% Used`;
         els.budgetWarning.classList.toggle('hidden', pct < 80);
         els.budgetBar.style.backgroundColor = pct > 100 ? '#C0392B' : (pct > 80 ? '#F39C12' : '#557C55');
@@ -207,7 +223,6 @@ function updateUI() {
 
 function animateValue(obj, val) { obj.innerText = val; }
 
-// CHARTS
 function renderCharts(data) {
     const dateMap = {};
     data.filter(t => t.amount < 0).forEach(t => { dateMap[t.date] = (dateMap[t.date] || 0) + Math.abs(t.amount); });
@@ -256,7 +271,7 @@ function renderCharts(data) {
     });
 }
 
-// FORM & FILTERS
+// FORM & FILTERS (Standard Logic)
 els.form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const type = document.querySelector('input[name="type"]:checked').value;
@@ -323,7 +338,6 @@ window.applyFilters = () => {
 };
 window.clearFilters = () => { els.fStart.value=''; els.fEnd.value=''; els.fCat.value='all'; els.fType.value='all'; filteredTransactions=[...transactions]; els.filterBtn.classList.remove('active-filter'); updateUI(); };
 window.setBudget = () => { const v = prompt("Limit (₹):", monthlyBudget); if(v){monthlyBudget=+v; localStorage.setItem('monthlyBudget',v); updateUI();} };
-window.logout = () => signOut(auth);
 window.printReport = () => window.print();
 window.exportReport = () => {
     const csv = ["Date,Text,Category,Type,Amount", ...filteredTransactions.map(t => `${t.date},${t.text},${t.category},${t.type},${t.amount}`)].join('\n');
@@ -333,11 +347,9 @@ window.exportReport = () => {
 function formatRupee(v) { return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v); }
 function showToast(msg, type) { els.toast.innerText = msg; els.toast.style.background = type === 'error' ? '#C0392B' : '#333'; els.toast.classList.add('show'); setTimeout(() => els.toast.classList.remove('show'), 3000); }
 
-// VOICE LOGIC
 if (window.SpeechRecognition || window.webkitSpeechRecognition) {
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = 'en-IN';
-    
     const synonyms = {
         'food': { type: 'expense', cat: 'Food 🍔' }, 'burger': { type: 'expense', cat: 'Food 🍔' }, 'lunch': { type: 'expense', cat: 'Food 🍔' }, 'dinner': { type: 'expense', cat: 'Food 🍔' },
         'rent': { type: 'bill', cat: 'Rent 🏠' }, 'house': { type: 'bill', cat: 'Rent 🏠' },
@@ -350,22 +362,15 @@ if (window.SpeechRecognition || window.webkitSpeechRecognition) {
         'school': { type: 'expense', cat: 'Education 📚' }, 'college': { type: 'expense', cat: 'Education 📚' }, 'tuition': { type: 'expense', cat: 'Education 📚' },
         'doctor': { type: 'expense', cat: 'Health 💊' }, 'medicine': { type: 'expense', cat: 'Health 💊' }, 'hospital': { type: 'expense', cat: 'Health 💊' }
     };
-
-    els.voiceBtn.addEventListener('click', () => { 
-        recognition.start(); 
-        els.voiceBtn.classList.add('voice-active'); 
-    });
-
+    els.voiceBtn.addEventListener('click', () => { recognition.start(); els.voiceBtn.classList.add('voice-active'); });
     recognition.onresult = (e) => {
         const cmd = e.results[0][0].transcript.toLowerCase();
         const amt = cmd.match(/(\d+)/);
         if (amt) document.getElementById('amount').value = amt[0];
-
         for (const [key, val] of Object.entries(synonyms)) {
             if (cmd.includes(key)) {
                 const radio = document.querySelector(`input[value="${val.type}"]`);
-                radio.checked = true;
-                radio.dispatchEvent(new Event('change')); 
+                radio.checked = true; radio.dispatchEvent(new Event('change')); 
                 setTimeout(() => { els.catSelect.value = val.cat; }, 50);
                 break;
             }
