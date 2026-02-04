@@ -1,0 +1,23 @@
+{
+  "name": "savvy-tracker",
+  "version": "1.0.0",
+  "description": "**Savings made simple.**",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sushaaanthh/Savvy-Expense-Tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sushaaanthh/Savvy-Expense-Tracker/issues"
+  },
+  "homepage": "https://github.com/sushaaanthh/Savvy-Expense-Tracker#readme",
+  "devDependencies": {
+    "vite": "^7.3.1"
+  }
+}
