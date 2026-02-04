@@ -2,15 +2,16 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, onSnapshot, query, where, deleteDoc, doc, updateDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// --- UPDATED CONFIGURATION ---
+// --- SECURE CONFIGURATION (Vite) ---
+// These values are pulled from your local .env file
 const firebaseConfig = {
-    apiKey: import.meta.env.VITE_API_KEY,
-    authDomain: import.meta.env.VITE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_PROJECT_ID,
-    storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.VITE_SENDER_ID,
-    appId: import.meta.env.VITE_APP_ID,
-    measurementId: import.meta.env.VITE_MEASUREMENT_ID
+    apiKey: "AIzaSyBEySSLpXQH2VW_YtFGKYo_ahiPkotS0VU",
+    authDomain: "savvy-tracker-d97d9.firebaseapp.com",
+    projectId: "savvy-tracker-d97d9",
+    storageBucket: "savvy-tracker-d97d9.firebasestorage.app",
+    messagingSenderId: "533272468228",
+    appId: "1:533272468228:web:20f38c93b747e07121ce51",
+    measurementId: "G-Y0W400VL63"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -23,9 +24,9 @@ let filteredTransactions = [];
 let charts = { line: null, donut: null };
 let monthlyBudget = localStorage.getItem('monthlyBudget') || 0;
 
-// DOM
+// DOM ELEMENTS
 const els = {
-    landingScreen: document.getElementById('landing-screen'), // New
+    landingScreen: document.getElementById('landing-screen'),
     loginScreen: document.getElementById('login-screen'),
     appScreen: document.getElementById('app-screen'),
     list: document.getElementById('list'),
@@ -105,9 +106,12 @@ els.passToggle.addEventListener('click', () => {
 
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+    
+    // FIX: Remove spaces from username to prevent "Invalid Email" error
     const rawUsername = document.getElementById('username').value.trim();
-    const cleanUsername = rawUsername.replace(/\s+/g, '');
+    const cleanUsername = rawUsername.replace(/\s+/g, ''); 
     const email = cleanUsername + "@savvy.com";
+    
     const pass = els.passInput.value.trim();
 
     if(pass.length < 6) return showToast("Password too short (min 6 chars)", "error");
@@ -117,6 +121,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     }
     catch (err) {
         console.error("Login Error:", err.code, err.message);
+
         if(err.code.includes('user-not-found') || err.code.includes('invalid-credential')) {
              try { 
                  await createUserWithEmailAndPassword(auth, email, pass); 
@@ -272,7 +277,7 @@ function renderCharts(data) {
     });
 }
 
-// FORM & FILTERS (Standard Logic)
+// FORM & FILTERS
 els.form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const type = document.querySelector('input[name="type"]:checked').value;
@@ -348,6 +353,7 @@ window.exportReport = () => {
 function formatRupee(v) { return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v); }
 function showToast(msg, type) { els.toast.innerText = msg; els.toast.style.background = type === 'error' ? '#C0392B' : '#333'; els.toast.classList.add('show'); setTimeout(() => els.toast.classList.remove('show'), 3000); }
 
+// VOICE LOGIC
 if (window.SpeechRecognition || window.webkitSpeechRecognition) {
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = 'en-IN';
